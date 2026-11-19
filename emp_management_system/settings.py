@@ -3,14 +3,12 @@ import os
 from pathlib import Path
 import dj_database_url
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Security Settings
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
-    "+6t$dm%ab8mi3jtyzw95wqo#6ls-c(3izmftqzjevkvtr!z2*a"
+    "local-development-only-key"
 )
 
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
@@ -21,7 +19,6 @@ ALLOWED_HOSTS = [
     ".vercel.app",
 ]
 
-
 # Applications
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -30,11 +27,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'accounts',
     'tickets',
 ]
-
 
 # Middleware
 MIDDLEWARE = [
@@ -48,9 +43,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'emp_management_system.urls'
-
 
 # Templates
 TEMPLATES = [
@@ -68,18 +61,26 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'emp_management_system.wsgi.application'
 
+# Database: SQLite locally, Neon PostgreSQL on Vercel
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# Database
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-    )
-}
-
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password Validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -97,13 +98,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Language and Time
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
-
 
 # Static Files
 STATIC_URL = '/static/'
@@ -118,7 +117,6 @@ STORAGES = {
     },
 }
 
-
 # CSRF and HTTPS
 CSRF_TRUSTED_ORIGINS = [
     "https://*.vercel.app",
@@ -129,10 +127,8 @@ SECURE_PROXY_SSL_HEADER = (
     "https",
 )
 
-
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 
 # Default Primary Key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
