@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Ticket | HelpDesk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-slate-900 text-white px-6 py-5">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+
+            <h1 class="text-2xl font-bold">
+                Help<span class="text-blue-400">Desk</span>
+            </h1>
+
+            <div class="flex gap-5 text-sm font-medium">
+                <a href="{% url 'dashboard' %}" class="hover:text-blue-300">
+                    Dashboard
+                </a>
+
+                <a href="{% url 'my_tickets' %}" class="hover:text-blue-300">
+                    My Tickets
+                </a>
+
+                <a href="{% url 'profile' %}" class="hover:text-blue-300">
+                    Profile
+                </a>
+
+                <a href="{% url 'logout' %}" class="hover:text-red-300">
+                    Logout
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- Main Content -->
+    <main class="max-w-3xl mx-auto px-5 py-12">
+
+        <!-- Heading -->
+        <div class="mb-7">
+
+            <p class="text-blue-600 font-semibold text-sm mb-2">
+                SUPPORT CENTER
+            </p>
+
+            <h2 class="text-3xl font-bold text-slate-800">
+                Create Support Ticket
+            </h2>
+
+            <p class="text-slate-500 mt-2">
+                Submit your issue and our support team will assist you.
+            </p>
+
+        </div>
+
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+            <div class="bg-slate-900 px-8 py-5">
+
+                <h3 class="text-white text-lg font-bold">
+                    Ticket Information
+                </h3>
+
+                <p class="text-slate-300 text-sm mt-1">
+                    Please provide accurate details about your issue.
+                </p>
+
+            </div>
+
+
+            <form method="POST" class="p-8">
+
+                {% csrf_token %}
+
+                <!-- Ticket Title -->
+                <div class="mb-6">
+
+                    <label class="block font-semibold text-slate-700 mb-2">
+                        Ticket Title
+                        <span class="text-red-500">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="Example: Unable to login to my account"
+                        maxlength="200"
+                        required
+                        class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+
+                    <p class="text-gray-400 text-xs mt-2">
+                        Write a short title that explains your problem.
+                    </p>
+
+                </div>
+
+
+                <!-- Description -->
+                <div class="mb-6">
+
+                    <label class="block font-semibold text-slate-700 mb-2">
+                        Description
+                        <span class="text-red-500">*</span>
+                    </label>
+
+                    <textarea
+                        name="description"
+                        rows="6"
+                        placeholder="Explain your issue in detail. Include any error messages you are receiving..."
+                        required
+                        class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition resize-y"></textarea>
+
+                    <p class="text-gray-400 text-xs mt-2">
+                        Provide enough information so the support team can understand your issue.
+                    </p>
+
+                </div>
+
+
+                <!-- Priority -->
+                <div class="mb-8">
+
+                    <label class="block font-semibold text-slate-700 mb-2">
+                        Priority Level
+                        <span class="text-red-500">*</span>
+                    </label>
+
+                    <select
+                        name="priority"
+                        required
+                        class="w-full border border-slate-300 rounded-xl px-4 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+
+                        <option value="Low">Low - General issue</option>
+                        <option value="Medium" selected>Medium - Needs attention</option>
+                        <option value="High">High - Urgent issue</option>
+
+                    </select>
+
+                    <p class="text-gray-400 text-xs mt-2">
+                        Select the priority according to the urgency of your issue.
+                    </p>
+
+                </div>
+
+
+                <!-- Information Box -->
+                <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-8">
+
+                    <p class="text-blue-800 font-semibold text-sm">
+                        What happens next?
+                    </p>
+
+                    <p class="text-blue-700 text-sm mt-1">
+                        Your ticket will be submitted with Open status. The support administrator can review and assign it to an employee.
+                    </p>
+
+                </div>
+
+
+                <!-- Buttons -->
+                <div class="flex flex-wrap gap-4">
+
+                    <button
+                        type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-7 py-3 rounded-xl font-semibold shadow-sm transition">
+                        Submit Ticket →
+                    </button>
+
+                    <a
+                        href="{% url 'my_tickets' %}"
+                        class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-7 py-3 rounded-xl font-semibold transition">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- Footer -->
+        <p class="text-center text-gray-400 text-xs mt-8">
+            © 2026 HelpDesk Ticket Management System
+        </p>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tickets | HelpDesk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+<div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col">
+
+        <div class="p-6 border-b border-slate-700">
+            <h1 class="text-2xl font-bold">
+                Help<span class="text-blue-400">Desk</span>
+            </h1>
+            <p class="text-slate-400 text-sm mt-1">Support Portal</p>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2">
+
+            <a href="{% url 'dashboard' %}"
+               class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">
+                Dashboard
+            </a>
+
+            <a href="{% url 'my_tickets' %}"
+               class="block px-4 py-3 rounded-xl bg-blue-600 text-white">
+                My Tickets
+            </a>
+
+            <a href="{% url 'create_ticket' %}"
+               class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">
+                Create Ticket
+            </a>
+
+            <a href="{% url 'profile' %}"
+               class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">
+                My Profile
+            </a>
+
+        </nav>
+
+        <div class="p-4 border-t border-slate-700">
+            <a href="{% url 'logout' %}"
+               class="block text-center bg-red-500 hover:bg-red-600 py-3 rounded-xl font-semibold">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="flex-1 min-w-0">
+
+        <!-- Navbar -->
+        <header class="bg-white shadow-sm px-5 md:px-8 py-5 flex justify-between items-center">
+
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">
+                    My Support Tickets
+                </h2>
+
+                <p class="text-sm text-gray-500">
+                    Welcome back, {{ request.user.username }}
+                </p>
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                    {{ request.user.username|first|upper }}
+                </div>
+
+                <span class="hidden sm:block font-semibold text-slate-700">
+                    {{ request.user.username }}
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <div class="p-5 md:p-8">
+
+            <!-- Heading -->
+            <div class="flex justify-between items-center flex-wrap gap-4 mb-8">
+
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-800">
+                        My Tickets
+                    </h3>
+
+                    <p class="text-gray-500 mt-1">
+                        Track and manage your support requests.
+                    </p>
+                </div>
+
+                <a href="{% url 'create_ticket' %}"
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-semibold shadow-sm transition">
+                    + Create New Ticket
+                </a>
+
+            </div>
+
+
+            <!-- Ticket Count -->
+            <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 mb-6">
+
+                <p class="text-gray-500 text-sm font-medium">
+                    Total Submitted Tickets
+                </p>
+
+                <h3 class="text-3xl font-bold text-slate-800 mt-2">
+                    {{ tickets|length }}
+                </h3>
+
+            </div>
+
+
+            <!-- Ticket Cards -->
+            {% for ticket in tickets %}
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5 hover:shadow-md transition">
+
+                <!-- Ticket Header -->
+                <div class="flex justify-between items-start flex-wrap gap-3 mb-4">
+
+                    <div>
+                        <p class="text-sm text-blue-600 font-semibold mb-1">
+                            Ticket #{{ ticket.id }}
+                        </p>
+
+                        <h3 class="text-xl font-bold text-slate-800">
+                            {{ ticket.title }}
+                        </h3>
+                    </div>
+
+
+                    <!-- Status Badge -->
+                    <div>
+
+                        {% if ticket.status == "Open" %}
+                            <span class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-xs font-bold">
+                                Open
+                            </span>
+
+                        {% elif ticket.status == "In Progress" %}
+                            <span class="bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-xs font-bold">
+                                In Progress
+                            </span>
+
+                        {% else %}
+                            <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold">
+                                Resolved
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Description -->
+                <div class="bg-slate-50 rounded-xl p-4 mb-5">
+
+                    <p class="text-xs text-gray-500 font-semibold uppercase mb-2">
+                        Description
+                    </p>
+
+                    <p class="text-slate-600 text-sm leading-6">
+                        {{ ticket.description|truncatechars:200 }}
+                    </p>
+
+                </div>
+
+
+                <!-- Ticket Information -->
+                <div class="flex flex-wrap gap-6 text-sm mb-5">
+
+                    <div>
+                        <p class="text-gray-400 text-xs mb-1">Priority</p>
+
+                        {% if ticket.priority == "High" %}
+                            <span class="text-red-600 font-bold">High</span>
+                        {% elif ticket.priority == "Medium" %}
+                            <span class="text-amber-600 font-bold">Medium</span>
+                        {% else %}
+                            <span class="text-green-600 font-bold">{{ ticket.priority }}</span>
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+                        <p class="text-gray-400 text-xs mb-1">Created On</p>
+
+                        <p class="text-slate-700 font-semibold">
+                            {{ ticket.created_at|date:"d M Y, h:i A" }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-400 text-xs mb-1">Ticket ID</p>
+
+                        <p class="text-slate-700 font-semibold">
+                            #{{ ticket.id }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-400 text-xs mb-1">Assigned To</p>
+
+                        <p class="text-slate-700 font-semibold">
+                            {% if ticket.assigned_to %}
+                                {{ ticket.assigned_to.username }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <!-- Footer -->
+                <div class="border-t border-gray-100 pt-4 flex justify-end">
+
+                    <a href="{% url 'ticket_detail' ticket.id %}"
+                       class="bg-slate-900 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition">
+                        View Ticket Details →
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <!-- Empty State -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
+
+                <div class="text-5xl mb-5">📋</div>
+
+                <h3 class="text-xl font-bold text-slate-800">
+                    No Tickets Found
+                </h3>
+
+                <p class="text-gray-500 mt-2 mb-6">
+                    You haven't created any support tickets yet.
+                </p>
+
+                <a href="{% url 'create_ticket' %}"
+                   class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition">
+                    Create Your First Ticket
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+
+            <!-- Footer -->
+            <p class="text-center text-gray-400 text-xs mt-8">
+                © 2026 HelpDesk Ticket Management System
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

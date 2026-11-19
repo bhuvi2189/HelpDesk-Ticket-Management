@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard | HelpDesk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+<div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col">
+
+        <div class="p-6 border-b border-slate-700">
+            <h1 class="text-2xl font-bold">
+                Help<span class="text-blue-400">Desk</span>
+            </h1>
+            <p class="text-slate-400 text-sm mt-1">Employee Portal</p>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2">
+
+            <a href="{% url 'employee_dashboard' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600 text-white">
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a href="{% url 'profile' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">
+                <span>👤</span>
+                My Profile
+            </a>
+
+        </nav>
+
+        <div class="p-4 border-t border-slate-700">
+            <a href="{% url 'logout' %}"
+               class="block text-center bg-red-500 hover:bg-red-600 py-3 rounded-xl font-semibold">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="flex-1 min-w-0">
+
+        <!-- Top Navbar -->
+        <header class="bg-white shadow-sm px-5 md:px-8 py-5 flex justify-between items-center">
+
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">
+                    Employee Dashboard
+                </h2>
+                <p class="text-sm text-gray-500">
+                    Welcome back, {{ request.user.username }}
+                </p>
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                    {{ request.user.username|first|upper }}
+                </div>
+
+                <div class="hidden sm:block">
+                    <p class="font-semibold text-slate-800">
+                        {{ request.user.username }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        Employee
+                    </p>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <div class="p-5 md:p-8">
+
+            <!-- Page Heading -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-slate-800">
+                    Overview
+                </h3>
+                <p class="text-gray-500 mt-1">
+                    Track and manage your assigned support tickets.
+                </p>
+            </div>
+
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-gray-500 text-sm font-medium">Total Tickets</p>
+                    <h3 class="text-3xl font-bold text-slate-800 mt-3">
+                        {{ total_tickets }}
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-2">Assigned to you</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-gray-500 text-sm font-medium">Open Tickets</p>
+                    <h3 class="text-3xl font-bold text-blue-600 mt-3">
+                        {{ open_tickets }}
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-2">Waiting for action</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-gray-500 text-sm font-medium">In Progress</p>
+                    <h3 class="text-3xl font-bold text-amber-500 mt-3">
+                        {{ in_progress_tickets }}
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-2">Currently working</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-gray-500 text-sm font-medium">Resolved</p>
+                    <h3 class="text-3xl font-bold text-green-600 mt-3">
+                        {{ resolved_tickets }}
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-2">Successfully completed</p>
+                </div>
+
+            </div>
+
+
+            <!-- Tickets Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+                <div class="p-6 border-b border-gray-100">
+                    <h3 class="text-lg font-bold text-slate-800">
+                        My Assigned Tickets
+                    </h3>
+                    <p class="text-sm text-gray-500 mt-1">
+                        Manage your assigned support requests.
+                    </p>
+                </div>
+
+                <div class="overflow-x-auto">
+
+                    <table class="w-full text-left">
+
+                        <thead class="bg-slate-50 text-gray-500 text-xs uppercase">
+                            <tr>
+                                <th class="px-6 py-4">Ticket ID</th>
+                                <th class="px-6 py-4">Title</th>
+                                <th class="px-6 py-4">Priority</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4">Update Status</th>
+                                <th class="px-6 py-4">Details</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-gray-100">
+
+                            {% for ticket in tickets %}
+
+                            <tr class="hover:bg-slate-50 transition">
+
+                                <td class="px-6 py-5 font-semibold text-blue-600">
+                                    #{{ ticket.id }}
+                                </td>
+
+                                <td class="px-6 py-5">
+                                    <p class="font-semibold text-slate-800">
+                                        {{ ticket.title }}
+                                    </p>
+                                </td>
+
+                                <td class="px-6 py-5">
+
+                                    {% if ticket.priority == "High" %}
+                                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            High
+                                        </span>
+                                    {% elif ticket.priority == "Medium" %}
+                                        <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            Medium
+                                        </span>
+                                    {% else %}
+                                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            {{ ticket.priority }}
+                                        </span>
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="px-6 py-5">
+
+                                    {% if ticket.status == "Open" %}
+                                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            Open
+                                        </span>
+                                    {% elif ticket.status == "In Progress" %}
+                                        <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            In Progress
+                                        </span>
+                                    {% else %}
+                                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            Resolved
+                                        </span>
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="px-6 py-5">
+
+                                    <form method="POST"
+                                          action="{% url 'employee_update_status' ticket.id %}"
+                                          class="flex flex-col gap-2 min-w-40">
+
+                                        {% csrf_token %}
+
+                                        <select name="status"
+                                                class="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+
+                                            <option value="Open"
+                                                {% if ticket.status == "Open" %}selected{% endif %}>
+                                                Open
+                                            </option>
+
+                                            <option value="In Progress"
+                                                {% if ticket.status == "In Progress" %}selected{% endif %}>
+                                                In Progress
+                                            </option>
+
+                                            <option value="Resolved"
+                                                {% if ticket.status == "Resolved" %}selected{% endif %}>
+                                                Resolved
+                                            </option>
+
+                                        </select>
+
+                                        <button type="submit"
+                                                class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-lg transition">
+                                            Update
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                                <td class="px-6 py-5">
+
+                                    <a href="{% url 'ticket_detail' ticket.id %}"
+                                       class="inline-block bg-slate-900 hover:bg-slate-700 text-white text-sm px-4 py-2 rounded-lg transition">
+                                        View Ticket
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+                                <td colspan="6" class="px-6 py-16 text-center">
+
+                                    <div class="text-4xl mb-3">📋</div>
+
+                                    <h4 class="text-lg font-bold text-slate-700">
+                                        No Tickets Assigned
+                                    </h4>
+
+                                    <p class="text-gray-500 text-sm mt-2">
+                                        You don't have any assigned tickets yet.
+                                    </p>
+
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            <p class="text-center text-gray-400 text-xs mt-8">
+                © 2026 HelpDesk Ticket Management System
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

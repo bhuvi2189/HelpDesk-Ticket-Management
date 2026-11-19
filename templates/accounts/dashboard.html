@@ -1,0 +1,126 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelpDesk | Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+    <div class="flex min-h-screen">
+
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-900 text-white hidden md:block p-6">
+
+            <h1 class="text-2xl font-bold mb-10">
+                HelpDesk
+            </h1>
+
+            <nav class="space-y-3">
+
+                <a href="{% url 'dashboard' %}"
+                   class="block bg-blue-600 px-4 py-3 rounded-lg">
+                    Dashboard
+                </a>
+
+                <a href="{% url 'create_ticket' %}"
+                   class="block px-4 py-3 rounded-lg hover:bg-slate-800">
+                    Create Ticket
+                </a>
+
+                <a href="{% url 'my_tickets' %}"
+                   class="block px-4 py-3 rounded-lg hover:bg-slate-800">
+                    My Tickets
+                </a>
+
+                <a href="{% url 'logout' %}"
+                   class="block px-4 py-3 rounded-lg hover:bg-red-600">
+                    Logout
+                </a>
+
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 md:p-10">
+
+            <div class="flex flex-wrap justify-between items-center gap-4 mb-10">
+
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-800">
+                        Dashboard
+                    </h2>
+
+                    <p class="text-slate-500 mt-2">
+                        Welcome back, {{ request.user.username }}!
+                    </p>
+                </div>
+
+                <a href="{% url 'create_ticket' %}"
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg font-medium">
+                    + Create New Ticket
+                </a>
+
+            </div>
+
+            <!-- Welcome Card -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white mb-8">
+
+                <h2 class="text-2xl font-bold mb-3">
+                    Welcome to HelpDesk
+                </h2>
+
+                <p class="text-blue-100">
+                    Manage your support requests and track your issues
+                    from one place.
+                </p>
+
+            </div>
+
+            <!-- Action Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <a href="{% url 'create_ticket' %}"
+                   class="bg-white p-7 rounded-xl shadow-sm hover:shadow-lg transition">
+
+                    <div class="text-3xl mb-4">🎫</div>
+
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">
+                        Create Ticket
+                    </h3>
+
+                    <p class="text-slate-500">
+                        Submit a new technical support request.
+                    </p>
+
+                </a>
+
+                <a href="{% url 'my_tickets' %}"
+                   class="bg-white p-7 rounded-xl shadow-sm hover:shadow-lg transition">
+
+                    <div class="text-3xl mb-4">📋</div>
+
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">
+                        My Tickets
+                    </h3>
+
+                    <p class="text-slate-500">
+                        View and track all your submitted tickets.
+                    </p>
+
+                </a>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</body>
+</html>

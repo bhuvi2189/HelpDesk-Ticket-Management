@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | HelpDesk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-slate-900 text-white px-6 md:px-10 py-4 flex justify-between items-center shadow-lg">
+        <div>
+            <h1 class="text-2xl font-bold">HelpDesk</h1>
+            <p class="text-xs text-slate-400">Ticket Management System</p>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <span class="hidden sm:block text-sm text-slate-300">
+                Welcome, <strong class="text-white">{{ request.user.username }}</strong>
+            </span>
+
+            <a href="{% url 'logout' %}"
+               class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-semibold transition">
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 md:px-8 py-8">
+
+        <!-- Page Heading -->
+        <div id="overview" class="mb-8">
+            <p class="text-blue-600 font-semibold text-sm uppercase tracking-wider">
+                Administration
+            </p>
+
+            <h2 class="text-3xl font-bold text-slate-800 mt-1">
+                Admin Dashboard
+            </h2>
+
+            <p class="text-slate-500 mt-2">
+                Manage tickets, assign employees and monitor ticket progress.
+            </p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center">
+                    <p class="text-slate-500 font-medium">Total Tickets</p>
+                    <span class="bg-slate-100 text-slate-700 p-3 rounded-xl">📋</span>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800 mt-4">
+                    {{ total_tickets }}
+                </h3>
+                <p class="text-xs text-slate-400 mt-1">All submitted tickets</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center">
+                    <p class="text-slate-500 font-medium">Open Tickets</p>
+                    <span class="bg-blue-50 text-blue-600 p-3 rounded-xl">📨</span>
+                </div>
+                <h3 class="text-3xl font-bold text-blue-600 mt-4">
+                    {{ open_tickets }}
+                </h3>
+                <p class="text-xs text-slate-400 mt-1">Waiting for action</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center">
+                    <p class="text-slate-500 font-medium">In Progress</p>
+                    <span class="bg-amber-50 text-amber-600 p-3 rounded-xl">⏳</span>
+                </div>
+                <h3 class="text-3xl font-bold text-amber-600 mt-4">
+                    {{ in_progress_tickets }}
+                </h3>
+                <p class="text-xs text-slate-400 mt-1">Currently being handled</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center">
+                    <p class="text-slate-500 font-medium">Resolved Tickets</p>
+                    <span class="bg-green-50 text-green-600 p-3 rounded-xl">✓</span>
+                </div>
+                <h3 class="text-3xl font-bold text-green-600 mt-4">
+                    {{ resolved_tickets }}
+                </h3>
+                <p class="text-xs text-slate-400 mt-1">Successfully completed</p>
+            </div>
+
+        </div>
+
+        <!-- Search and Filters -->
+        <div id="filters" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
+
+            <div class="mb-5">
+                <h3 class="text-xl font-bold text-slate-800">
+                    Search & Filter Tickets
+                </h3>
+                <p class="text-sm text-slate-500 mt-1">
+                    Find tickets using title, description, username, status or priority.
+                </p>
+            </div>
+
+            <form method="GET"
+                  action="{% url 'admin_dashboard' %}"
+                  class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search_query }}"
+                    placeholder="Search tickets or username..."
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                >
+
+                <select name="status"
+                        class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500">
+
+                    <option value="">All Status</option>
+
+                    <option value="Open" {% if selected_status == "Open" %}selected{% endif %}>
+                        Open
+                    </option>
+
+                    <option value="In Progress" {% if selected_status == "In Progress" %}selected{% endif %}>
+                        In Progress
+                    </option>
+
+                    <option value="Resolved" {% if selected_status == "Resolved" %}selected{% endif %}>
+                        Resolved
+                    </option>
+
+                </select>
+
+                <select name="priority"
+                        class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500">
+
+                    <option value="">All Priorities</option>
+
+                    <option value="Low" {% if selected_priority == "Low" %}selected{% endif %}>
+                        Low
+                    </option>
+
+                    <option value="Medium" {% if selected_priority == "Medium" %}selected{% endif %}>
+                        Medium
+                    </option>
+
+                    <option value="High" {% if selected_priority == "High" %}selected{% endif %}>
+                        High
+                    </option>
+
+                </select>
+
+                <div class="flex gap-2">
+                    <button type="submit"
+                            class="flex-1 bg-blue-600 text-white font-semibold px-4 py-3 rounded-xl hover:bg-blue-700 transition">
+                        Search
+                    </button>
+
+                    <a href="{% url 'admin_dashboard' %}"
+                       class="flex-1 text-center bg-slate-100 text-slate-700 font-semibold px-4 py-3 rounded-xl hover:bg-slate-200 transition">
+                        Reset
+                    </a>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Tickets Table -->
+        <div id="tickets" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+            <div class="p-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">
+                        All Tickets
+                    </h3>
+                    <p class="text-sm text-slate-500 mt-1">
+                        Manage and track submitted tickets.
+                    </p>
+                </div>
+
+                <span class="text-sm bg-blue-50 text-blue-700 px-4 py-2 rounded-lg font-semibold">
+                    Ticket Management
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full text-left min-w-[1400px]">
+
+                    <thead class="bg-slate-50 text-slate-600 text-sm uppercase">
+                        <tr>
+                            <th class="p-4">Title</th>
+                            <th class="p-4">Description</th>
+                            <th class="p-4">User</th>
+                            <th class="p-4">Priority</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4">Created At</th>
+                            <th class="p-4">Update Status</th>
+                            <th class="p-4">Assigned Employee</th>
+                            <th class="p-4">Assign Ticket</th>
+                            <th class="p-4">Details</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-slate-100">
+
+                        {% for ticket in tickets %}
+
+                        <tr class="hover:bg-slate-50 transition">
+
+                            <!-- Title -->
+                            <td class="p-4 font-semibold text-slate-800">
+                                {{ ticket.title }}
+                            </td>
+
+                            <!-- Description -->
+                            <td class="p-4 text-sm text-slate-600 max-w-xs">
+                                {{ ticket.description|truncatewords:10 }}
+                            </td>
+
+                            <!-- User -->
+                            <td class="p-4 text-sm text-slate-700">
+                                {{ ticket.user.username }}
+                            </td>
+
+                            <!-- Priority -->
+                            <td class="p-4">
+                                {% if ticket.priority == "High" %}
+                                    <span class="bg-red-50 text-red-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        High
+                                    </span>
+                                {% elif ticket.priority == "Medium" %}
+                                    <span class="bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        Medium
+                                    </span>
+                                {% else %}
+                                    <span class="bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        {{ ticket.priority }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Status -->
+                            <td class="p-4">
+                                {% if ticket.status == "Open" %}
+                                    <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        Open
+                                    </span>
+                                {% elif ticket.status == "In Progress" %}
+                                    <span class="bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        In Progress
+                                    </span>
+                                {% else %}
+                                    <span class="bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        {{ ticket.status }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Created At -->
+                            <td class="p-4 text-sm text-slate-600 whitespace-nowrap">
+                                {{ ticket.created_at|date:"d M Y" }}
+                            </td>
+
+                            <!-- Update Status -->
+                            <td class="p-4">
+                                <form method="POST"
+                                      action="{% url 'update_ticket_status' ticket.id %}"
+                                      class="flex flex-col gap-2">
+
+                                    {% csrf_token %}
+
+                                    <select name="status"
+                                            class="border border-slate-300 rounded-lg p-2 text-sm">
+
+                                        <option value="Open" {% if ticket.status == "Open" %}selected{% endif %}>
+                                            Open
+                                        </option>
+
+                                        <option value="In Progress" {% if ticket.status == "In Progress" %}selected{% endif %}>
+                                            In Progress
+                                        </option>
+
+                                        <option value="Resolved" {% if ticket.status == "Resolved" %}selected{% endif %}>
+                                            Resolved
+                                        </option>
+
+                                    </select>
+
+                                    <button type="submit"
+                                            class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">
+                                        Update
+                                    </button>
+
+                                </form>
+                            </td>
+
+                            <!-- Assigned Employee -->
+                            <td class="p-4 text-sm">
+                                {% if ticket.assigned_to %}
+                                    <span class="text-green-700 font-semibold">
+                                        {{ ticket.assigned_to.username }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-red-500 font-medium">
+                                        Not Assigned
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Assign Employee -->
+                            <td class="p-4">
+                                <form method="POST"
+                                      action="{% url 'assign_ticket' ticket.id %}"
+                                      class="flex flex-col gap-2">
+
+                                    {% csrf_token %}
+
+                                    <select name="employee"
+                                            required
+                                            class="border border-slate-300 rounded-lg p-2 text-sm">
+
+                                        <option value="">Select Employee</option>
+
+                                        {% for employee in employees %}
+
+                                            <option value="{{ employee.id }}"
+                                                {% if ticket.assigned_to_id == employee.id %}selected{% endif %}>
+                                                {{ employee.username }}
+                                            </option>
+
+                                        {% endfor %}
+
+                                    </select>
+
+                                    <button type="submit"
+                                            class="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">
+                                        Assign
+                                    </button>
+
+                                </form>
+                            </td>
+
+                            <!-- Ticket Details -->
+                            <td class="p-4">
+                                <a href="{% url 'ticket_detail' ticket.id %}"
+                                   class="inline-block bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-900 transition">
+                                    View Details
+                                </a>
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="10" class="p-10 text-center">
+                                <p class="text-slate-500 font-semibold">
+                                    No tickets found.
+                                </p>
+                                <p class="text-sm text-slate-400 mt-1">
+                                    Try changing your search or filters.
+                                </p>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-slate-400 text-sm mt-8">
+            © 2026 HelpDesk Ticket Management System
+        </footer>
+
+    </div>
+
+</body>
+</html>
