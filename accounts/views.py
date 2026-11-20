@@ -6,8 +6,6 @@ from django.contrib.auth.decorators import login_required
 
 
 # User Registration
-
-# User Registration
 def register(request):
 
     error = ""
@@ -64,9 +62,11 @@ def user_login(request):
 
             login(request, user)
 
-            if user.is_staff:
+            # Admin Dashboard
+            if user.is_staff or user.is_superuser:
                 return redirect("admin_dashboard")
 
+            # Employee Dashboard
             return redirect("employee_dashboard")
 
         else:
@@ -89,10 +89,10 @@ def user_login(request):
 @login_required
 def dashboard(request):
 
-    return render(
-        request,
-        "accounts/dashboard.html"
-    )
+    if request.user.is_staff or request.user.is_superuser:
+        return redirect("admin_dashboard")
+
+    return redirect("employee_dashboard")
 
 
 # User Profile
