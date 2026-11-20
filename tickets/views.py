@@ -210,3 +210,10 @@ def employee_update_status(request, ticket_id):
             ticket.save()
 
     return redirect("employee_dashboard")
+
+# User Profile
+@login_required
+def profile(request):
+    return render(request, "accounts/profile.html", {
+        "user": request.user
+    })
