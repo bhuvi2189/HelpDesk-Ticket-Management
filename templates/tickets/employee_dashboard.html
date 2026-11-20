@@ -30,6 +30,18 @@
                 Dashboard
             </a>
 
+            <a href="{% url 'create_ticket' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">
+                <span>➕</span>
+                Create Ticket
+            </a>
+
+            <a href="{% url 'my_tickets' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">
+                <span>📋</span>
+                My Tickets
+            </a>
+
             <a href="{% url 'profile' %}"
                class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">
                 <span>👤</span>
@@ -86,13 +98,23 @@
         <div class="p-5 md:p-8">
 
             <!-- Page Heading -->
-            <div class="mb-8">
-                <h3 class="text-2xl font-bold text-slate-800">
-                    Overview
-                </h3>
-                <p class="text-gray-500 mt-1">
-                    Track and manage your assigned support tickets.
-                </p>
+            <div class="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-800">
+                        Overview
+                    </h3>
+                    <p class="text-gray-500 mt-1">
+                        Create support requests and manage your assigned tickets.
+                    </p>
+                </div>
+
+                <a href="{% url 'create_ticket' %}"
+                   class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-xl shadow-sm transition">
+                    <span>+</span>
+                    Create New Ticket
+                </a>
+
             </div>
 
 
@@ -137,13 +159,22 @@
             <!-- Tickets Table -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
-                <div class="p-6 border-b border-gray-100">
-                    <h3 class="text-lg font-bold text-slate-800">
-                        My Assigned Tickets
-                    </h3>
-                    <p class="text-sm text-gray-500 mt-1">
-                        Manage your assigned support requests.
-                    </p>
+                <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">
+                            My Assigned Tickets
+                        </h3>
+                        <p class="text-sm text-gray-500 mt-1">
+                            Manage your assigned support requests.
+                        </p>
+                    </div>
+
+                    <a href="{% url 'my_tickets' %}"
+                       class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
+                        View My Tickets →
+                    </a>
+
                 </div>
 
                 <div class="overflow-x-auto">
@@ -275,6 +306,11 @@
                                     <p class="text-gray-500 text-sm mt-2">
                                         You don't have any assigned tickets yet.
                                     </p>
+
+                                    <a href="{% url 'create_ticket' %}"
+                                       class="inline-block mt-5 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-xl">
+                                        Create Your First Ticket
+                                    </a>
 
                                 </td>
                             </tr>
